@@ -31,16 +31,26 @@
 (defn win-vectors [board]
   (reduce concat ((juxt rows cols diags) board)))
 
-(defn get-vector-values [board win-vec] (map board win-vec))
+(defn position-vals [board positions] (map board positions))
+
+(def first-value (comp first filter))
 
 (defn winning-player? [board player]
   (let [winning-sequence (take (size board)
                                (repeat player))]
     (->> (win-vectors board)
-         (map (partial get-vector-values board))
-         (filter (partial = winning-sequence))
-         (first))))
+         (map (partial position-vals board))
+         (first-value (partial = winning-sequence)))))
 
 (defn winner [board]
-  (first (filter (partial winning-player? board)
-                 ["X" "O"])))
+  (first-value (partial winning-player? board)
+               ["X" "O"]))
+
+(defn compact [coll] (filter (comp not nil?) coll))
+
+(defn drawn? [board]
+  (->> (win-vectors board)
+       (map (partial position-vals board))
+       (map compact)
+       (map set)
+       (every? (partial = #{"X" "O"}))))

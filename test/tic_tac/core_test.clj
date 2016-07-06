@@ -40,3 +40,17 @@
   (is (= "O" (-> (board 3)
                  (assoc "A0" "O" "B1" "O" "C2" "O")
                  (winner)))))
+
+
+
+(deftest identify-drawn-boards
+  (is (not (drawn? (board 3))))
+  ;; X| |O
+  ;; -----
+  ;; O|O|X
+  ;; -----
+  ;; X|X|O
+  (is (-> (board 3)
+          (assoc "A0" "X" "B2" "X" "C0" "X" "C1" "X")
+          (assoc "A2" "O" "B0" "O" "B1" "O" "C2" "O")
+          (drawn?))))
