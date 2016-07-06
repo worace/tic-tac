@@ -1,6 +1,10 @@
 (ns tic-tac.core)
 
-(defn foo
-  "I don't do a whole lot."
-  [x]
-  (println x "Hello, World!"))
+(defn alphabet [] (map (comp str char) (iterate inc (int \A))))
+
+(defn board [size]
+  (zipmap (mapcat (fn [row]
+                    (for [col (range size)]
+                      (str row col)))
+                  (take size (alphabet)))
+          (repeat nil)))

@@ -2,6 +2,8 @@
   (:require [clojure.test :refer :all]
             [tic-tac.core :refer :all]))
 
-(deftest a-test
-  (testing "FIXME, I fail."
-    (is (= 0 1))))
+(deftest making-a-grid
+  (is (= 9 (count (board 3))))
+  (is (some #{"A0"} (keys (board 3))))
+  (is (some #{"C2"} (keys (board 3))))
+  (is (nil? (get (board 3) "C2"))))
