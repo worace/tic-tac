@@ -7,3 +7,14 @@
   (is (some #{"A0"} (keys (board 3))))
   (is (some #{"C2"} (keys (board 3))))
   (is (nil? (get (board 3) "C2"))))
+
+
+(deftest figuring-out-win-vectors
+  (let [b (board 3)]
+    (is (= 3 (count (rows b))))
+    (is (= ["A0" "A1" "A2"] (first (rows b))))
+    (is (= 3 (count (cols b))))
+    (is (= ["A2" "B2" "C2"] (last (cols b))))
+    (is (= 2 (count (diags b))))
+    (is (= [["A0" "B1" "C2"]
+            ["A2" "B1" "C0"]] (diags b)))))
