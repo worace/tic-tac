@@ -27,3 +27,20 @@
         (forward-and-backward (range (size board)))]
        (apply map str)
        (partition (size board))))
+
+(defn win-vectors [board]
+  (reduce concat ((juxt rows cols diags) board)))
+
+(defn get-vector-values [board win-vec] (map board win-vec))
+
+(defn winning-player? [board player]
+  (let [winning-sequence (take (size board)
+                               (repeat player))]
+    (->> (win-vectors board)
+         (map (partial get-vector-values board))
+         (filter (partial = winning-sequence))
+         (first))))
+
+(defn winner [board]
+  (first (filter (partial winning-player? board)
+                 ["X" "O"])))
