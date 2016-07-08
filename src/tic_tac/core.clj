@@ -112,13 +112,13 @@
 
 (defn get-move [board player]
   (case player
-    "X" (best-move board player)
+    "X" (do (println "Computer is picking its move...") (best-move board player))
     "O" (prompt-move board)))
 
 (defn play []
-  ;; make board
-  ;; prompt player for move ("X" by default?)
-  ;; print view of available cells...
+  (println "Welcome to frustratingly difficult tic-tac-toe.")
+  (println "You play as O's and the computer will play for X's.")
+  (println "O's go first...")
   (loop [b (board 3)
          current-player "O"]
     (println "Current Board:")
