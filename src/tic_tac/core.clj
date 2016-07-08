@@ -71,9 +71,8 @@
        (filter (fn [[k v]] (nil? v)))
        (map first)))
 
-(defn outcomes-map [move outcomes player]
-  {:move move
-   :outcomes outcomes
+(defn outcomes-map [outcomes player]
+  {:outcomes outcomes
    :min-score (->> outcomes
                    (map #(score % player))
                    (apply min))})
@@ -81,17 +80,15 @@
 (defn final-state? [board] (or (winner board) (drawn? board)))
 
 (defn game-tree [board current-player]
-  (let [move-outcomes (map (fn [move]
-                             (let [new-board (assoc board move current-player)
-                                   outcomes (if (final-state? new-board)
-                                              [new-board]
-                                              (game-tree new-board (opponent current-player)))]
-                               (outcomes-map move outcomes current-player)
-                               ))
-                           (empty-squares board))]
-    (->> move-outcomes
-         (apply max-key :min-score)
-         (:outcomes))))
+  (->> (empty-squares board)
+       (map (fn [move] (assoc board move current-player)))
+       (map (fn [new-board]
+              (if (final-state? new-board)
+                [new-board]
+                (game-tree new-board (opponent current-player)))))
+       (map (fn [outcomes] (outcomes-map outcomes current-player)))
+       (apply max-key :min-score)
+       (:outcomes)))
 
 (defn best-move [board player]
   (apply max-key (fn [square]
