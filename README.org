@@ -1,14 +1,15 @@
-# tic-tac
+* Tic-Tac Toe
 
-A Clojure library designed to ... well, that part is up to you.
+Clojure implementation of the famously-beatable pen and paper game.
 
-## Usage
+Play against the AI with:
 
-FIXME
+#+BEGIN_EXAMPLE
+lein run
+#+END_EXAMPLE
 
-## License
+Run tests with
 
-Copyright © 2016 FIXME
-
-Distributed under the Eclipse Public License either version 1.0 or (at
-your option) any later version.
+#+BEGIN_EXAMPLE
+lein test
+#+END_EXAMPLE
