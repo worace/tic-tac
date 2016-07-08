@@ -54,3 +54,39 @@
        (map compact)
        (map set)
        (every? (partial = #{"X" "O"}))))
+
+(def next-turn {"O" "X" "X" "O"})
+
+(defn prompt-move [board]
+  (loop [selection (read-line)]
+    (cond
+      (not (contains? board selection)) (do (println "Sorry," selection "is not a valid move.")
+                                            (recur (read-line)))
+      (not (nil? (board selection))) (do (println "Sorry," selection "is not an open square.")
+                                         (recur (read-line)))
+      :else selection)))
+
+(defn empty-squares [board]
+  (->> board
+       (filter (fn [[k v]] (nil? v)))
+       (map first)))
+
+(defn computer-move [board]
+  (rand-nth (empty-squares board)))
+
+(defn get-move [board player]
+  (case player
+    "X" (computer-move board)
+    "O" (prompt-move board)))
+
+(defn play []
+  ;; make board
+  ;; prompt player for move ("X" by default?)
+  ;; print view of available cells...
+  (loop [b (board 3)
+         current-player "O"]
+    (cond
+      (winner b) (println (winner b) "wins!")
+      (drawn? b) (println "Sorry, game is a draw...")
+      :else (recur (assoc b (get-move b current-player) current-player)
+                   (next-turn current-player)))))
