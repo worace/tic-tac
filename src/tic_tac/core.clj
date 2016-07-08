@@ -56,20 +56,34 @@
        (map set)
        (every? (partial = #{"X" "O"}))))
 
-(defn board-string [board]
-  (let [line-sep (str "\n"
-                      (apply str (take (+ 2 (size board))
-                                       (repeat "-")))
-                      "\n")]
-    (->> (sort board)
-         (map (fn [[square value]] (or value " ")))
-         (partition (size board))
-         (map (fn [row] (join "|" row)))
-         (join line-sep))))
+(defn row-fence [length]
+  (apply str (take length (repeat "-"))))
+
+(defn board-string [square-display-fn board]
+  (->> (sort board)
+       (map square-display-fn)
+       (partition (size board))
+       (map (partial join "|"))
+       (mapcat (fn [row-str] [row-str
+                              (row-fence (count row-str))]))
+       (drop-last)
+       (join "\n")))
+
+(def board-status-string (partial board-string
+                                  (fn [[square value]]
+                                    (or value " "))))
+
+(def prompt-string (partial board-string
+                            (fn [[square value]]
+                              (if (nil? value)
+                                square
+                                "**"))))
 
 (def next-turn {"O" "X" "X" "O"})
 
 (defn prompt-move [board]
+  (println "Choose a move from the open spaces:")
+  (println (prompt-string board))
   (loop [selection (read-line)]
     (cond
       (not (contains? board selection)) (do (println "Sorry," selection "is not a valid move.")
@@ -98,7 +112,7 @@
   (loop [b (board 3)
          current-player "O"]
     (println "Current Board:")
-    (println (board-string b))
+    (println (board-status-string b))
     (cond
       (winner b) (println (winner b) "wins!")
       (drawn? b) (println "Sorry, game is a draw...")

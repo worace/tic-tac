@@ -63,9 +63,15 @@
 
 (deftest printing-a-board
   (is (= " | | \n-----\n | | \n-----\n | | "
-         (board-string (board 3))))
+         (board-status-string (board 3))))
   (is (= " | | \n-----\n |X| \n-----\nO| | "
-         (board-string (assoc (board 3) "B1" "X" "C0" "O")))))
+         (board-status-string (assoc (board 3) "B1" "X" "C0" "O")))))
+
+(deftest prompting-for-a-move
+  (is (= "A0|A1|A2\n--------\nB0|B1|B2\n--------\nC0|C1|C2"
+         (prompt-string (board 3))))
+  (is (= "A0|**|A2\n--------\nB0|B1|B2\n--------\n**|C1|C2"
+         (prompt-string (assoc (board 3) "A1" "X" "C0" "O")))))
 
 
 ;; drawn
