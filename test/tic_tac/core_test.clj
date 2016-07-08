@@ -1,6 +1,8 @@
 (ns tic-tac.core-test
   (:require [clojure.test :refer :all]
-            [tic-tac.core :refer :all]))
+            [tic-tac.core :refer :all]
+            [tic-tac.display :refer [board-status-string
+                                     prompt-string]]))
 
 (deftest making-a-grid
   (is (= 9 (count (board 3))))
