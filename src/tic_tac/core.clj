@@ -1,4 +1,5 @@
-(ns tic-tac.core)
+(ns tic-tac.core
+  (:require [clojure.string :refer [join]]))
 
 (defn alphabet [] (map (comp str char) (iterate inc (int \A))))
 
@@ -55,6 +56,17 @@
        (map set)
        (every? (partial = #{"X" "O"}))))
 
+(defn board-string [board]
+  (let [line-sep (str "\n"
+                      (apply str (take (+ 2 (size board))
+                                       (repeat "-")))
+                      "\n")]
+    (->> (sort board)
+         (map (fn [[square value]] (or value " ")))
+         (partition (size board))
+         (map (fn [row] (join "|" row)))
+         (join line-sep))))
+
 (def next-turn {"O" "X" "X" "O"})
 
 (defn prompt-move [board]
@@ -85,8 +97,12 @@
   ;; print view of available cells...
   (loop [b (board 3)
          current-player "O"]
+    (println "Current Board:")
+    (println (board-string b))
     (cond
       (winner b) (println (winner b) "wins!")
       (drawn? b) (println "Sorry, game is a draw...")
       :else (recur (assoc b (get-move b current-player) current-player)
                    (next-turn current-player)))))
+
+(defn -main [& args] (play))

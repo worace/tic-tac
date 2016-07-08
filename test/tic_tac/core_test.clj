@@ -28,8 +28,7 @@
             ["A2" "B2" "C2"]
             ;; Diags
             ["A0" "B1" "C2"]
-            ["A2" "B1" "C0"]
-            ]
+            ["A2" "B1" "C0"]]
            (win-vectors b)))))
 
 (deftest identifying-winning-boards
@@ -61,6 +60,12 @@
           (assoc "A0" "X" "B2" "X" "C0" "X" "C1" "X")
           (assoc "A2" "O" "B0" "O" "B1" "O" "C2" "O")
           (drawn?))))
+
+(deftest printing-a-board
+  (is (= " | | \n-----\n | | \n-----\n | | "
+         (board-string (board 3))))
+  (is (= " | | \n-----\n |X| \n-----\nO| | "
+         (board-string (assoc (board 3) "B1" "X" "C0" "O")))))
 
 
 ;; drawn
