@@ -73,8 +73,63 @@
   (is (= "A0|**|A2\n--------\nB0|B1|B2\n--------\n**|C1|C2"
          (prompt-string (assoc (board 3) "A1" "X" "C0" "O")))))
 
+(def drawn-board (-> (board 3)
+                     (assoc "A0" "X" "B2" "X" "C0" "X" "C1" "X")
+                     (assoc "A2" "O" "B0" "O" "B1" "O" "C2" "O")))
+
+(deftest scoring-a-board
+  (let [b (board 3)]
+    (is (= 0 (score b "X")))
+    (is (= 100 (score (assoc b "A0" "X" "A1" "X" "A2" "X")
+                      "X")))
+    (is (= -100 (score (assoc b "A0" "O" "A1" "O" "A2" "O")
+                      "X")))
+    (is (= 0 (score drawn-board "X")))
+    ))
+
+(deftest computer-makes-winning-move
+  (let [b (-> (board 3)
+              (assoc "A0" "X"
+                     "A1" "O"
+                     "B1" "X"
+                     "A2" "O"))]
+    (is (= "C2" (best-move b "X")))))
+
+(deftest computer-blocks-winning-move
+  (let [b (-> (board 3)
+              (assoc "A0" "O"
+                     "A1" "X"
+                     "B1" "O"))]
+    (is (= "C2" (best-move b "X"))))
+  (let [b (-> (board 3)
+              (assoc "A0" "O"
+                     "A1" "O"
+                     "C2" "X"))]
+    (is (= "A2" (best-move b "X"))))
+  (let [b (-> (board 3)
+              (assoc "C0" "O"
+                     "B1" "O"
+                     "C2" "X"))]
+    (is (= "A2" (best-move b "X")))))
 
 ;; drawn
 ;; {"A0" "X", "A1" nil, "A2" "O",
 ;;  "B0" "O", "B1" "O", "B2" "X",
 ;;  "C0" "X", "C1" "X", "C2" "O"}
+
+;; TicTacToe Scoring
+;; Win: 100 points
+;; Loss: -100 points
+;; Draw: 0 points
+;; 2 in a row: 20 points (??)
+;; 2 in a row opponent: - 20 points (??)
+
+;; Min-Maxing
+;; 1 - need to calculate a "score" for given game states
+;;   - score is from perspective of a given player (X/O)
+;; 2 - at each turn, need to calculate score for
+;;     each possible move
+;;   - take the move that returns the highest score
+;;
+;; Depth:
+;; - specify how many iterations to look in each dir?
