@@ -9,8 +9,7 @@
 
 (defn size [board] (int (Math/sqrt (count board))))
 
-(defn transpose [m]
-  (apply mapv vector m))
+(defn transpose [m] (apply mapv vector m))
 
 (defn grid [size]
   (for [row (take size (alphabet))]
@@ -65,51 +64,34 @@
     (= player (winner board)) 100
     (= (opponent player) (winner board)) -100
     (drawn? board) 0
-    :else 0
-    ))
+    :else 0))
 
 (defn empty-squares [board]
   (->> board
        (filter (fn [[k v]] (nil? v)))
        (map first)))
 
-;; look at open squares (empty-squares board)
-;; if i play this square
-;; - what is the worst possible score i can get
-;; - what is the best possible score i can get
-;; Problem:
-;; when checking possible scores, have to also assume
-;; that opponent plays best possible move
+(defn outcomes-map [move outcomes player]
+  {:move move
+   :outcomes outcomes
+   :min-score (->> outcomes
+                   (map #(score % player))
+                   (apply min))})
 
-;; Best move --
-;; choose move that results in best possible game tree
-;; have to look at all end-states for the game resulting
-;; from that tree
-
-;; (score (assoc board square player)
-;;                           player)
-
-;; maximize the minimum possible score
-;; resulting from each move
+(defn final-state? [board] (or (winner board) (drawn? board)))
 
 (defn game-tree [board current-player]
   (let [move-outcomes (map (fn [move]
                              (let [new-board (assoc board move current-player)
-                                   outcomes (cond
-                                              (winner new-board) [new-board]
-                                              (drawn? new-board) [new-board]
-                                              :else (game-tree new-board (opponent current-player)))]
-                               {:move move
-                                :outcomes outcomes
-                                :min-score (->> outcomes
-                                                (map #(score % current-player))
-                                                (apply min))}))
+                                   outcomes (if (final-state? new-board)
+                                              [new-board]
+                                              (game-tree new-board (opponent current-player)))]
+                               (outcomes-map move outcomes current-player)
+                               ))
                            (empty-squares board))]
     (->> move-outcomes
          (apply max-key :min-score)
          (:outcomes))))
-
-(defn minimum-possible-score [board current-player])
 
 (defn best-move [board player]
   (apply max-key (fn [square]
