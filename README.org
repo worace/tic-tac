@@ -13,3 +13,13 @@ Run tests with
 #+BEGIN_EXAMPLE
 lein test
 #+END_EXAMPLE
+
+** Implementation Notes
+
+ * Represents a board as a map of coordinates to values, where coordinates are a pair of a row (A,B,C) and column (0,1,2). Obvious other choice would be to use a matrix, but this way saves us having to do any coordinate math which is kind of nice.
+ * Uses a (so far somewhat crude) min-max algorithm to evaluate expected outcomes at different states in the game.
+ * The AI tries to chose moves that lead to the "best possible worst-case scenario" -- i.e. that maximize the minimum "score".
+ * Score is a bit arbitrary for TicTacToe but this use-case it helps to assume a win is positive, a draw is neutral (0) and a loss is negative.
+ * So in order, the AI will prefer to win if possible, but otherwise will avoid losing in favor of a draw.
+ * Biggest remaining task is to optimize the search process the AI uses to apply this scenario. Currently it investigates all possible outcomes in a tree below each move. TTT is fairly simple but there are still a lot of states near the top of the tree, so it takes some time.
+ * There's probably some general optimization that could be squeezed out of intermediate steps, but the best approach is probably to remove some of the branches from the tree -- for example removing duplicate / symmetrical branches or trying to remove branches that will obviously lead to sub-optimal outcomes
